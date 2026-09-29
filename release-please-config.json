@@ -6,7 +6,8 @@
   "include-component-in-tag": false,
   "packages": {
     ".": {
-      "extra-files": ["src/version.ts"]
+      "extra-files": ["src/version.ts"],
+      "initial-version": "0.0.1"
     }
   }
 }
