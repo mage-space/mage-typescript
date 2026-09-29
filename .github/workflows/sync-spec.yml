@@ -23,6 +23,8 @@ env:
 jobs:
   sync:
     name: Sync
+    # Idle until the release bot is configured (see CONTRIBUTING.md).
+    if: vars.MAGE_BOT_APP_ID != ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

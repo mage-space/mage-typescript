@@ -13,6 +13,8 @@ permissions:
 jobs:
   release-please:
     name: Release PR
+    # Idle until the release bot is configured (see CONTRIBUTING.md).
+    if: vars.MAGE_BOT_APP_ID != ''
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}

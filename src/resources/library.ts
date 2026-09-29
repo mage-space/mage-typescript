@@ -24,7 +24,7 @@ class Library<Item, List, Create> {
     this.#path = path;
   }
 
-  /** Lists one page. Pass its `next_cursor` back as `cursor` for the next. */
+  /** Lists one page, newest first. Pass its `next_cursor` back as `cursor`. */
   list(params: ListParams = {}, options?: CallOptions): Promise<List> {
     return this.#core.call('GET', this.#path, {
       query: { limit: params.limit, cursor: params.cursor },
