@@ -39,6 +39,25 @@ const networkError: Handler = () => {
   throw new TypeError('fetch failed');
 };
 
+/** Headers arrive, then the connection drops while the body is read. */
+const droppedBody: Handler = () =>
+  new Response(
+    new ReadableStream({
+      start(controller) {
+        controller.error(new TypeError('terminated'));
+      },
+    }),
+    { status: 202 },
+  );
+
+/** Never answers; rejects when the call is aborted. */
+const hang: Handler = (_url, init) =>
+  new Promise((_resolve, reject) => {
+    init.signal?.addEventListener('abort', () => reject(init.signal?.reason), {
+      once: true,
+    });
+  });
+
 const headersOf = (init: RequestInit) => init.headers as Record<string, string>;
 
 function request(
@@ -169,6 +188,21 @@ describe('generate', () => {
     await settle(client(fetch).generate('mango', { prompt: 'a' }));
 
     expect(calls).toHaveLength(3);
+    const keys = new Set(
+      calls.map((call) => headersOf(call.init)['Idempotency-Key']),
+    );
+    expect(keys.size).toBe(1);
+  });
+
+  it('retries a body cut off after the headers under the same key', async () => {
+    const { fetch, calls } = fakeFetch(droppedBody, json(202, request()));
+
+    const result = await settle(
+      client(fetch).generate('mango', { prompt: 'a' }),
+    );
+
+    expect(result.request_id).toBe('req_1');
+    expect(calls).toHaveLength(2);
     const keys = new Set(
       calls.map((call) => headersOf(call.init)['Idempotency-Key']),
     );
@@ -334,19 +368,32 @@ describe('wait and run', () => {
     );
   });
 
-  it('times out with the last state and leaves the request running', async () => {
-    const { fetch, calls } = fakeFetch(
-      json(200, request()),
-      json(200, request()),
-    );
+  // The deadline uses real timers: AbortSignal.timeout ignores fake ones.
+  it('does not start a read once the deadline has passed', async () => {
+    vi.useRealTimers();
+    const { fetch, calls } = fakeFetch(json(200, request()));
 
-    const error = await settle(
-      client(fetch).requests.wait(request(), { timeout: 4000 }),
-    ).catch((caught: unknown) => caught);
+    const error = await client(fetch)
+      .requests.wait(request(), { pollInterval: 40, timeout: 60 })
+      .catch((caught: unknown) => caught);
 
     expect(error).toBeInstanceOf(MageTimeoutError);
-    expect((error as MageTimeoutError).request.status).toBe('in_progress');
-    expect(calls.every((call) => call.url.endsWith('/status'))).toBe(true);
+    expect((error as MageTimeoutError).request?.status).toBe('in_progress');
+    expect(calls).toHaveLength(1);
+  });
+
+  it('stops a status read that runs past the deadline', async () => {
+    vi.useRealTimers();
+    const { fetch } = fakeFetch(hang);
+    const started = Date.now();
+
+    const error = await client(fetch)
+      .requests.wait('req_1', { timeout: 50 })
+      .catch((caught: unknown) => caught);
+
+    expect(error).toBeInstanceOf(MageTimeoutError);
+    expect((error as MageTimeoutError).request).toBeNull();
+    expect(Date.now() - started).toBeLessThan(1000);
   });
 
   it('stops when the signal aborts', async () => {

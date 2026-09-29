@@ -19,8 +19,8 @@ export interface WaitOptions extends CallOptions {
   /** The longest delay between status reads, in milliseconds. Default 15000. */
   maxPollInterval?: number;
   /**
-   * Give up after this many milliseconds with a MageTimeoutError. The request
-   * keeps running. Default: no limit.
+   * Give up after this many milliseconds with a MageTimeoutError, even in the
+   * middle of a status read. The request keeps running. Default: no limit.
    */
   timeout?: number;
   /** Called with the request after every status read. */
@@ -70,26 +70,29 @@ export class Requests {
       onUpdate,
       signal,
     } = options;
-    const deadline = timeout === undefined ? undefined : Date.now() + timeout;
-    let current: GenerationRequest;
-    if (typeof request === 'string') {
-      current = await this.get(request, { signal });
-      onUpdate?.(current);
-    } else {
-      current = request;
-    }
+    // The deadline bounds the pauses and every status read, retries included.
+    const expiry =
+      timeout === undefined ? undefined : AbortSignal.timeout(timeout);
+    const waitSignal =
+      signal && expiry ? AbortSignal.any([signal, expiry]) : (signal ?? expiry);
+    const requestId =
+      typeof request === 'string' ? request : request.request_id;
+    let current = typeof request === 'string' ? null : request;
     let delay = pollInterval;
-    while (!isFinal(current)) {
-      let pause = delay + Math.random() * 500;
-      if (deadline !== undefined) {
-        const remaining = deadline - Date.now();
-        if (remaining <= 0) throw new MageTimeoutError(current);
-        pause = Math.min(pause, remaining);
+    try {
+      while (current === null || !isFinal(current)) {
+        if (current !== null) {
+          await sleep(delay + Math.random() * 500, waitSignal);
+          delay = Math.min(delay * 1.5, maxPollInterval);
+        }
+        current = await this.get(requestId, { signal: waitSignal });
+        onUpdate?.(current);
       }
-      await sleep(pause, signal);
-      current = await this.get(current.request_id, { signal });
-      onUpdate?.(current);
-      delay = Math.min(delay * 1.5, maxPollInterval);
+    } catch (error) {
+      if (expiry?.aborted && !signal?.aborted) {
+        throw new MageTimeoutError(requestId, current);
+      }
+      throw error;
     }
     return current;
   }

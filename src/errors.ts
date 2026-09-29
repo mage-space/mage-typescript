@@ -38,9 +38,8 @@ export class MageAPIError extends MageError {
     this.headers = init.headers;
   }
 
-  /** Reads an error response into an error. */
-  static async from(response: Response): Promise<MageAPIError> {
-    const text = await response.text();
+  /** Builds the error for an error response and its body text. */
+  static from(response: Response, text: string): MageAPIError {
     let body: unknown = text;
     try {
       body = JSON.parse(text);
@@ -66,15 +65,18 @@ export class MageConnectionError extends MageError {
 
 /**
  * `wait` or `run` reached its `timeout` before the request finished. The
- * request keeps running; `request` is its last state.
+ * request keeps running on Mage.
  */
 export class MageTimeoutError extends MageError {
   override name = 'MageTimeoutError';
-  readonly request: GenerationRequest;
+  /** The last state read, or null when none was read in time. */
+  readonly request: GenerationRequest | null;
 
-  constructor(request: GenerationRequest) {
+  constructor(requestId: string, request: GenerationRequest | null) {
     super(
-      `Request ${request.request_id} was still ${request.status} when the wait timed out.`,
+      request
+        ? `Request ${requestId} was still ${request.status} when the wait timed out.`
+        : `Request ${requestId} could not be read before the wait timed out.`,
     );
     this.request = request;
   }

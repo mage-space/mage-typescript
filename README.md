@@ -121,7 +121,7 @@ const page = await mage.characters.list({ limit: 50 });
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `MageAPIError`        | The API answered with an error. It has `status`, `code` (such as `insufficient_gems` or `invalid_config`), `message`, and `requestId`. Handle a code you do not recognise by its `status`. |
 | `MageGenerationError` | `run` finished with a failed or cancelled request. It has `code` and `request`.                                                                                                            |
-| `MageTimeoutError`    | `wait` or `run` reached your `timeout`. The request keeps running; `request` is its last state.                                                                                            |
+| `MageTimeoutError`    | `wait` or `run` reached your `timeout`, which also cuts short a status read in progress. The request keeps running; `request` is the last state read.                                      |
 | `MageConnectionError` | No response arrived after retrying.                                                                                                                                                        |
 | `MageError`           | The base class of all of the above, also thrown for a missing API key.                                                                                                                     |
 

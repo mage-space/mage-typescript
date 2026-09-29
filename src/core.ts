@@ -67,30 +67,30 @@ export class Core {
       headers['Content-Type'] = 'application/json';
       body = JSON.stringify(init.body);
     }
-    const response = await this.send(
+    const { text } = await this.send(
       url,
       { method, headers, body },
       init.retry,
       init.signal,
     );
-    if (response.status === 204) return undefined as T;
-    return (await response.json()) as T;
+    return (text === '' ? undefined : JSON.parse(text)) as T;
   }
 
   /**
    * Sends a request to any URL, retrying per `retry`, and returns the
-   * successful response. Throws MageAPIError for an error status and
-   * MageConnectionError when no response arrived.
+   * successful response with its body read. Throws MageAPIError for an error
+   * status and MageConnectionError when no complete response arrived.
    */
   async send(
     url: URL | string,
     init: RequestInit,
     retry: RetryPolicy,
     signal?: AbortSignal,
-  ): Promise<Response> {
+  ): Promise<{ response: Response; text: string }> {
     for (let attempt = 0; ; attempt++) {
       const retriesLeft = retry !== 'none' && attempt < this.#maxRetries;
       let response: Response;
+      let text: string;
       try {
         response = await this.#fetch(url, {
           ...init,
@@ -98,6 +98,9 @@ export class Core {
             ? AbortSignal.any([signal, AbortSignal.timeout(this.#timeout)])
             : AbortSignal.timeout(this.#timeout),
         });
+        // Reading the body belongs to the attempt: a connection that drops
+        // after the headers is retried like one that drops before them.
+        text = await response.text();
       } catch (error) {
         signal?.throwIfAborted();
         if (retriesLeft) {
@@ -109,8 +112,8 @@ export class Core {
           { cause: error },
         );
       }
-      if (response.ok) return response;
-      const error = await MageAPIError.from(response);
+      if (response.ok) return { response, text };
+      const error = MageAPIError.from(response, text);
       if (retriesLeft && isRetryable(error, retry)) {
         await sleep(backoff(attempt), signal);
         continue;
