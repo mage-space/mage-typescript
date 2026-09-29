@@ -1,0 +1,56 @@
+{
+  "name": "@mage-space/sdk",
+  "version": "0.0.0",
+  "description": "TypeScript SDK for the Mage API: generate images, video, and audio with Mage models.",
+  "keywords": [
+    "mage",
+    "ai",
+    "image-generation",
+    "video-generation",
+    "audio-generation",
+    "sdk"
+  ],
+  "homepage": "https://docs.mage.space/api/overview",
+  "bugs": "https://github.com/mage-space/mage-typescript/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mage-space/mage-typescript.git"
+  },
+  "license": "MIT",
+  "author": "Mage (https://www.mage.space)",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs && prettier --write src/generated",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "smoke": "node scripts/smoke.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "prettier": "^3.9.9",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  }
+}

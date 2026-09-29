@@ -1,0 +1,125 @@
+name: Sync API spec
+
+# Mage publishes its API reference at docs.mage.space. When it changes, open a
+# pull request that updates spec/openapi.json and the generated types. Additive
+# changes merge on their own once CI passes; breaking ones wait for review.
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [api-spec-changed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-spec
+
+env:
+  SPEC_URL: https://docs.mage.space/api/openapi.json
+  OASDIFF_VERSION: 1.32.1
+
+jobs:
+  sync:
+    name: Sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Fetch the published spec
+        id: fetch
+        run: |
+          curl --fail --silent --show-error --location --retry 3 "$SPEC_URL" --output "$RUNNER_TEMP/openapi.json"
+          if cmp --silent "$RUNNER_TEMP/openapi.json" spec/openapi.json; then
+            echo "The spec is unchanged."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Classify the change
+        if: steps.fetch.outputs.changed == 'true'
+        id: classify
+        run: |
+          curl --fail --silent --show-error --location \
+            "https://github.com/oasdiff/oasdiff/releases/download/v${OASDIFF_VERSION}/oasdiff_${OASDIFF_VERSION}_linux_amd64.tar.gz" \
+            | tar -xz -C "$RUNNER_TEMP" oasdiff
+          oasdiff="$RUNNER_TEMP/oasdiff"
+          new="$RUNNER_TEMP/openapi.json"
+          body="$RUNNER_TEMP/body.md"
+          "$oasdiff" changelog spec/openapi.json "$new" --format markdown > "$RUNNER_TEMP/changelog.md"
+          if ! "$oasdiff" breaking spec/openapi.json "$new" --fail-on ERR --format text > "$RUNNER_TEMP/breaking.txt"; then
+            kind=breaking
+            title='feat!: sync API spec'
+          elif grep --quiet '^## API Changes' "$RUNNER_TEMP/changelog.md"; then
+            kind=feature
+            title='feat: sync API spec'
+          else
+            kind=docs
+            title='docs: sync API spec'
+          fi
+          {
+            echo "Updates \`spec/openapi.json\` from $SPEC_URL and regenerates the types."
+            echo
+            if [ "$kind" = breaking ]; then
+              echo "**Breaking:** this removes or narrows something clients may use, so it needs a review before merging."
+              echo
+              echo '```'
+              cat "$RUNNER_TEMP/breaking.txt"
+              echo '```'
+              echo
+            fi
+            sed 's/^# API Changelog.*$/### Changes/' "$RUNNER_TEMP/changelog.md"
+          } > "$body"
+          echo "kind=$kind" >> "$GITHUB_OUTPUT"
+          echo "title=$title" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v7
+        if: steps.fetch.outputs.changed == 'true'
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Regenerate
+        if: steps.fetch.outputs.changed == 'true'
+        run: |
+          npm ci
+          mv "$RUNNER_TEMP/openapi.json" spec/openapi.json
+          npm run generate
+
+      # A token from the GitHub App, not GITHUB_TOKEN, so the pull request
+      # runs CI and can merge itself.
+      - name: Create a bot token
+        if: steps.fetch.outputs.changed == 'true'
+        id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.MAGE_BOT_APP_ID }}
+          private-key: ${{ secrets.MAGE_BOT_PRIVATE_KEY }}
+
+      - name: Open or update the pull request
+        if: steps.fetch.outputs.changed == 'true'
+        id: pr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ steps.app.outputs.token }}
+          branch: bot/sync-spec
+          delete-branch: true
+          commit-message: ${{ steps.classify.outputs.title }}
+          title: ${{ steps.classify.outputs.title }}
+          body-path: ${{ runner.temp }}/body.md
+          labels: ${{ steps.classify.outputs.kind == 'breaking' && 'needs-review' || '' }}
+
+      - name: Merge once checks pass, unless breaking
+        if: steps.pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          PR: ${{ steps.pr.outputs.pull-request-number }}
+        run: |
+          if [ "${{ steps.classify.outputs.kind }}" = breaking ]; then
+            gh pr merge --disable-auto "$PR" || true
+          else
+            gh pr merge --auto --squash "$PR"
+          fi
