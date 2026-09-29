@@ -52,7 +52,8 @@ jobs:
           new="$RUNNER_TEMP/openapi.json"
           body="$RUNNER_TEMP/body.md"
           "$oasdiff" changelog spec/openapi.json "$new" --format markdown > "$RUNNER_TEMP/changelog.md"
-          if ! "$oasdiff" breaking spec/openapi.json "$new" --fail-on ERR --format text > "$RUNNER_TEMP/breaking.txt"; then
+          # Warnings count too: oasdiff reports a removed optional field as one.
+          if ! "$oasdiff" breaking spec/openapi.json "$new" --fail-on WARN --format text > "$RUNNER_TEMP/breaking.txt"; then
             kind=breaking
             title='feat!: sync API spec'
           elif grep --quiet '^## API Changes' "$RUNNER_TEMP/changelog.md"; then
