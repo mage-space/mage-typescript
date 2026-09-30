@@ -201,7 +201,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.generate('mango', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.request_id, request.status);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.generate(\"mango\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"request_id\"], request[\"status\"])"
+          }
+        ]
       }
     },
     "/v1/architectures": {
@@ -229,7 +241,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst { architectures } = await mage.architectures.list();\n\nfor (const architecture of architectures) {\n  console.log(architecture.id, architecture.gems);\n}"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\ncatalog = mage.architectures.list()\n\nfor architecture in catalog[\"architectures\"]:\n    print(architecture[\"id\"], architecture[\"gems\"])"
+          }
+        ]
       }
     },
     "/v1/requests/{request_id}/status": {
@@ -345,7 +369,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.requests.get('REQUEST_ID');\n\n// Or poll until it is completed, failed, or cancelled:\nconst final = await mage.requests.wait('REQUEST_ID');\nconsole.log(final.status, final.result?.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.requests.get(\"REQUEST_ID\")\n\n# Or poll until it is completed, failed, or cancelled:\nfinal = mage.requests.wait(\"REQUEST_ID\")\nprint(final[\"status\"], final[\"result\"] and final[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/requests/{request_id}/cancel": {
@@ -420,7 +456,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.requests.cancel('REQUEST_ID');\n\nconsole.log(request.status); // cancelled"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.requests.cancel(\"REQUEST_ID\")\n\nprint(request[\"status\"])  # cancelled"
+          }
+        ]
       }
     },
     "/v1/account": {
@@ -453,7 +501,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst account = await mage.account.get();\n\nconsole.log(account.gems.balance);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\naccount = mage.account.get()\n\nprint(account[\"gems\"][\"balance\"])"
+          }
+        ]
       }
     },
     "/v1/uploads": {
@@ -523,7 +583,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import { readFile } from 'node:fs/promises';\nimport Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\n// Creates the ticket and uploads the file to it.\nconst ticket = await mage.uploads.upload(await readFile('clip.mp4'), {\n  contentType: 'video/mp4',\n});\n\nconsole.log(ticket.url); // send this in any media field"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\n# Creates the ticket and uploads the file to it.\nticket = mage.uploads.upload(\"clip.mp4\")  # a path, bytes, or a binary file\n\nprint(ticket[\"url\"])  # send this in any media field"
+          }
+        ]
       }
     },
     "/v1/characters": {
@@ -592,7 +664,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst page = await mage.characters.list({ limit: 50 });\n\nfor (const character of page.data) {\n  console.log(`@${character.handle}`, character.name);\n}\n// Pass page.next_cursor as cursor for the next page."
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\npage = mage.characters.list(limit=50)\n\nfor character in page[\"data\"]:\n    print(f\"@{character['handle']}\", character[\"name\"])\n# Pass page[\"next_cursor\"] as cursor for the next page."
+          }
+        ]
       },
       "post": {
         "operationId": "create_character",
@@ -654,7 +738,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nawait mage.characters.create({\n  name: 'Ana',\n  handle: 'ana',\n  image: 'https://example.com/ana.jpg',\n});\n\nawait mage.run('mango', { prompt: '@ana walking through a night market' });"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nmage.characters.create(\n    name=\"Ana\",\n    handle=\"ana\",\n    image=\"https://example.com/ana.jpg\",\n)\n\nmage.run(\"mango\", {\"prompt\": \"@ana walking through a night market\"})"
+          }
+        ]
       }
     },
     "/v1/characters/{character_id}": {
@@ -690,7 +786,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nawait mage.characters.delete('CHARACTER_ID');"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nmage.characters.delete(\"CHARACTER_ID\")"
+          }
+        ]
       }
     },
     "/v1/references": {
@@ -759,7 +867,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst page = await mage.references.list({ limit: 50 });\n\nfor (const reference of page.data) {\n  console.log(`@${reference.handle}`, reference.kind);\n}"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\npage = mage.references.list(limit=50)\n\nfor reference in page[\"data\"]:\n    print(f\"@{reference['handle']}\", reference[\"kind\"])"
+          }
+        ]
       },
       "post": {
         "operationId": "create_reference",
@@ -820,7 +940,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nawait mage.references.create({\n  name: 'Red coat',\n  handle: 'red-coat',\n  kind: 'outfit',\n  image: 'https://example.com/red-coat.jpg',\n});\n\nawait mage.run('mango', { prompt: 'a figure wearing @red-coat in the snow' });"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nmage.references.create(\n    name=\"Red coat\",\n    handle=\"red-coat\",\n    kind=\"outfit\",\n    image=\"https://example.com/red-coat.jpg\",\n)\n\nmage.run(\"mango\", {\"prompt\": \"a figure wearing @red-coat in the snow\"})"
+          }
+        ]
       }
     },
     "/v1/references/{reference_id}": {
@@ -856,7 +988,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nawait mage.references.delete('REFERENCE_ID');"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nmage.references.delete(\"REFERENCE_ID\")"
+          }
+        ]
       }
     },
     "/v1/anima/generate": {
@@ -1021,7 +1165,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('anima', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"anima\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/chroma/generate": {
@@ -1165,7 +1321,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('chroma', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"chroma\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/flux2/generate": {
@@ -1347,7 +1515,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('flux2', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"flux2\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/gpt_image_2/generate": {
@@ -1527,7 +1707,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('gpt_image_2', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"gpt_image_2\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/grok_image/generate": {
@@ -1711,7 +1903,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('grok_image', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '1:1',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"grok_image\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"1:1\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/guava/generate": {
@@ -1893,7 +2097,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('guava', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"guava\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/hidream/generate": {
@@ -2041,7 +2257,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('hidream', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"hidream\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/krea_2/generate": {
@@ -2198,7 +2426,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('krea_2', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"krea_2\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/mango/generate": {
@@ -2377,7 +2617,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('mango', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"mango\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/nano_banana_v2/generate": {
@@ -2568,7 +2820,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('nano_banana_v2', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '1:1',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"nano_banana_v2\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"1:1\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/sdxl_plus/generate": {
@@ -2777,7 +3041,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('sdxl_plus', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"sdxl_plus\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/stable_diffusion_v15/generate": {
@@ -2942,7 +3218,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('stable_diffusion_v15', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"stable_diffusion_v15\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/stable_diffusion_v35_large/generate": {
@@ -3103,7 +3391,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('stable_diffusion_v35_large', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"stable_diffusion_v35_large\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/stable_diffusion_xl/generate": {
@@ -3268,7 +3568,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('stable_diffusion_xl', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"stable_diffusion_xl\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/z_image/generate": {
@@ -3421,7 +3733,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('z_image', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"z_image\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/berry/generate": {
@@ -3642,7 +3966,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('berry', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '3',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"berry\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"3\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/blueberry/generate": {
@@ -3844,7 +4180,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('blueberry', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '4',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"blueberry\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"4\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/cherry/generate": {
@@ -4053,7 +4401,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('cherry', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '4',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"cherry\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"4\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/grok_video/generate": {
@@ -4261,7 +4621,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('grok_video', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"grok_video\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/kiwi/generate": {
@@ -4426,7 +4798,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('kiwi', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"kiwi\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/lemon/generate": {
@@ -4688,7 +5072,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('lemon', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '3',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"lemon\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"3\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/ltx_video/generate": {
@@ -4873,7 +5269,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('ltx_video', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '3:2',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"ltx_video\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"3:2\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/melon/generate": {
@@ -5090,7 +5498,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('melon', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '4',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"melon\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"4\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/minimax_h3/generate": {
@@ -5332,7 +5752,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('minimax_h3', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"minimax_h3\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/plum/generate": {
@@ -5571,7 +6003,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('plum', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"plum\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/raspberry/generate": {
@@ -5780,7 +6224,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('raspberry', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n  duration: '4',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"raspberry\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n    \"duration\": \"4\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/wan_22/generate": {
@@ -5961,7 +6417,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('wan_22', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  aspect_ratio: '16:9',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"wan_22\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     },
     "/v1/seed_audio/generate": {
@@ -6122,7 +6590,19 @@
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
-        }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('seed_audio', {\n  prompt: 'A calm narrator reading a short weather report',\n  duration: '5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"seed_audio\", {\n    \"prompt\": \"A calm narrator reading a short weather report\",\n    \"duration\": \"5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
       }
     }
   },
