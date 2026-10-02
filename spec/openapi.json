@@ -2492,7 +2492,8 @@
                       "mango",
                       "mango-v2",
                       "mango-v3s",
-                      "mango-v3"
+                      "mango-v3",
+                      "mango-v3-turbo"
                     ],
                     "description": "The model variant to generate with.",
                     "default": "mango-v3"

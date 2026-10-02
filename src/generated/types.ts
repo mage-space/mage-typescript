@@ -526,7 +526,7 @@ export interface MangoConfig {
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
   /** The model variant to generate with. Default: `"mango-v3"`. */
-  model_id?: 'mango' | 'mango-v2' | 'mango-v3s' | 'mango-v3';
+  model_id?: 'mango' | 'mango-v2' | 'mango-v3s' | 'mango-v3' | 'mango-v3-turbo';
   /** Aspect ratio as `W:H`. Default: `"4:5"`. */
   aspect_ratio?:
     '21:9' | '16:9' | '3:2' | '5:4' | '1:1' | '4:5' | '2:3' | '9:16' | '9:21';
