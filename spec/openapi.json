@@ -2681,10 +2681,11 @@
                   "model_id": {
                     "type": "string",
                     "enum": [
-                      "nano-banana-v2"
+                      "nano-banana-v2",
+                      "nano-banana-v2.1"
                     ],
                     "description": "The model variant to generate with.",
-                    "default": "nano-banana-v2"
+                    "default": "nano-banana-v2.1"
                   },
                   "aspect_ratio": {
                     "type": "string",
@@ -2714,7 +2715,7 @@
                       "4K"
                     ],
                     "description": "Output resolution token.",
-                    "default": "512"
+                    "default": "1K"
                   },
                   "image": {
                     "anyOf": [
@@ -2782,12 +2783,12 @@
                   "request_id": "d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff",
                   "status": "in_progress",
                   "architecture": "nano_banana_v2",
-                  "model_id": "nano-banana-v2",
+                  "model_id": "nano-banana-v2.1",
                   "created_at": "2026-09-17T14:52:48.000Z",
                   "updated_at": "2026-09-17T14:52:49.000Z",
                   "billing": {
                     "mode": "gems",
-                    "gems_charged": 68
+                    "gems_charged": 51
                   },
                   "result": null,
                   "error": null,

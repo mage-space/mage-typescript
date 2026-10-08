@@ -545,8 +545,8 @@ export interface NanoBananaV2Config {
   prompt: string;
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
-  /** The model variant to generate with. Default: `"nano-banana-v2"`. */
-  model_id?: 'nano-banana-v2';
+  /** The model variant to generate with. Default: `"nano-banana-v2.1"`. */
+  model_id?: 'nano-banana-v2' | 'nano-banana-v2.1';
   /** Aspect ratio as `W:H`. Default: `"1:1"`. */
   aspect_ratio?:
     | '1:1'
@@ -561,7 +561,7 @@ export interface NanoBananaV2Config {
     | '9:16'
     | '16:9'
     | '21:9';
-  /** Output resolution token. Default: `"512"`. */
+  /** Output resolution token. Default: `"1K"`. */
   resolution?: '512' | '1K' | '2K' | '4K';
   /** The reference image. An https URL or a data URL. */
   image?: string;
