@@ -79,6 +79,7 @@
               "enum": [
                 "mango",
                 "krea_2",
+                "moss_image",
                 "minimax_h3",
                 "z_image",
                 "stable_diffusion_xl",
@@ -103,6 +104,8 @@
                 "anima",
                 "melon",
                 "seed_audio",
+                "eleven_speech",
+                "eleven_music",
                 "plum",
                 "lemon"
               ]
@@ -2629,6 +2632,171 @@
             "lang": "python",
             "label": "Python SDK",
             "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"mango\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
+      }
+    },
+    "/v1/moss_image/generate": {
+      "post": {
+        "operationId": "generate_moss_image",
+        "summary": "MOSS-Image",
+        "description": "Generate an image with MOSS-Image.",
+        "tags": [
+          "Image models"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "A key of your choosing, 1 to 255 characters, scoped to your API key. A retried submit with the same key returns the original request with `200` instead of charging again. The key identifies the first submission made with it; later bodies are not compared. A refusal recorded under the key (its envelope carries `request_id`) replays the same way, so a new attempt needs a new key.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "A partial config for MOSS-Image.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The text prompt."
+                  },
+                  "seed": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Integer seed for reproducible output; omit or send null for a random seed."
+                  },
+                  "model_id": {
+                    "type": "string",
+                    "enum": [
+                      "moss-image"
+                    ],
+                    "description": "The model variant to generate with.",
+                    "default": "moss-image"
+                  },
+                  "aspect_ratio": {
+                    "type": "string",
+                    "enum": [
+                      "21:9",
+                      "16:9",
+                      "3:2",
+                      "5:4",
+                      "1:1",
+                      "4:5",
+                      "2:3",
+                      "9:16",
+                      "9:21"
+                    ],
+                    "description": "Aspect ratio as `W:H`.",
+                    "default": "4:5"
+                  },
+                  "resolution": {
+                    "type": "string",
+                    "enum": [
+                      "1k",
+                      "2k"
+                    ],
+                    "description": "Output resolution token.",
+                    "default": "1k"
+                  },
+                  "num_inference_steps": {
+                    "type": "number",
+                    "default": 50
+                  },
+                  "guidance_scale": {
+                    "type": "number",
+                    "default": 3
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "additionalProperties": true
+              },
+              "example": {
+                "prompt": "Editorial portrait in soft daylight, 35mm film look",
+                "aspect_ratio": "4:5"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request was accepted; poll `status_url` for the result. A retried submit whose `Idempotency-Key` was used before answers `200` with the same shape, the original request, and charges nothing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                },
+                "example": {
+                  "request_id": "d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff",
+                  "status": "in_progress",
+                  "architecture": "moss_image",
+                  "model_id": "moss-image",
+                  "created_at": "2026-09-17T14:52:48.000Z",
+                  "updated_at": "2026-09-17T14:52:49.000Z",
+                  "billing": {
+                    "mode": "gems",
+                    "gems_charged": 25
+                  },
+                  "result": null,
+                  "error": null,
+                  "status_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/status",
+                  "cancel_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/cancel"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGenerateRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/InsufficientGems"
+          },
+          "403": {
+            "$ref": "#/components/responses/GenerationForbidden"
+          },
+          "410": {
+            "$ref": "#/components/responses/ArchitectureRetired"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "451": {
+            "$ref": "#/components/responses/ExternalContentBlock"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('moss_image', {\n  prompt: 'Editorial portrait in soft daylight, 35mm film look',\n  aspect_ratio: '4:5',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"moss_image\", {\n    \"prompt\": \"Editorial portrait in soft daylight, 35mm film look\",\n    \"aspect_ratio\": \"4:5\",\n})\n\nprint(request[\"result\"][\"url\"])"
           }
         ]
       }
@@ -5818,10 +5986,11 @@
                     "type": "string",
                     "enum": [
                       "plum",
-                      "plum-max"
+                      "plum-max",
+                      "plum-fast"
                     ],
                     "description": "The model variant to generate with.",
-                    "default": "plum-max"
+                    "default": "plum-fast"
                   },
                   "aspect_ratio": {
                     "type": "string",
@@ -5966,12 +6135,12 @@
                   "request_id": "d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff",
                   "status": "in_progress",
                   "architecture": "plum",
-                  "model_id": "plum-max",
+                  "model_id": "plum-fast",
                   "created_at": "2026-09-17T14:52:48.000Z",
                   "updated_at": "2026-09-17T14:52:49.000Z",
                   "billing": {
                     "mode": "gems",
-                    "gems_charged": 338
+                    "gems_charged": 173
                   },
                   "result": null,
                   "error": null,
@@ -6430,6 +6599,313 @@
             "lang": "python",
             "label": "Python SDK",
             "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"wan_22\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"aspect_ratio\": \"16:9\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
+      }
+    },
+    "/v1/eleven_music/generate": {
+      "post": {
+        "operationId": "generate_eleven_music",
+        "summary": "Eleven Music",
+        "description": "Generate audio with Eleven Music.",
+        "tags": [
+          "Audio models"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "A key of your choosing, 1 to 255 characters, scoped to your API key. A retried submit with the same key returns the original request with `200` instead of charging again. The key identifies the first submission made with it; later bodies are not compared. A refusal recorded under the key (its envelope carries `request_id`) replays the same way, so a new attempt needs a new key.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "A partial config for Eleven Music.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The text prompt."
+                  },
+                  "seed": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Integer seed for reproducible output; omit or send null for a random seed."
+                  },
+                  "model_id": {
+                    "type": "string",
+                    "enum": [
+                      "eleven-music-v2.5"
+                    ],
+                    "description": "The model variant to generate with.",
+                    "default": "eleven-music-v2.5"
+                  },
+                  "duration": {
+                    "type": "string",
+                    "enum": [
+                      "10",
+                      "30",
+                      "60",
+                      "120",
+                      "180",
+                      "300"
+                    ],
+                    "description": "Clip length in seconds, as a token.",
+                    "default": "30"
+                  },
+                  "instrumental": {
+                    "type": "boolean",
+                    "default": false
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "additionalProperties": true
+              },
+              "example": {
+                "prompt": "An upbeat indie pop song about a summer road trip, bright guitars, handclaps, female vocals, 110 BPM.",
+                "duration": "30"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request was accepted; poll `status_url` for the result. A retried submit whose `Idempotency-Key` was used before answers `200` with the same shape, the original request, and charges nothing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                },
+                "example": {
+                  "request_id": "d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff",
+                  "status": "in_progress",
+                  "architecture": "eleven_music",
+                  "model_id": "eleven-music-v2.5",
+                  "created_at": "2026-09-17T14:52:48.000Z",
+                  "updated_at": "2026-09-17T14:52:49.000Z",
+                  "billing": {
+                    "mode": "gems",
+                    "gems_charged": 113
+                  },
+                  "result": null,
+                  "error": null,
+                  "status_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/status",
+                  "cancel_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/cancel"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGenerateRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/InsufficientGems"
+          },
+          "403": {
+            "$ref": "#/components/responses/GenerationForbidden"
+          },
+          "410": {
+            "$ref": "#/components/responses/ArchitectureRetired"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "451": {
+            "$ref": "#/components/responses/ExternalContentBlock"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('eleven_music', {\n  prompt: 'An upbeat indie pop song about a summer road trip, bright guitars, handclaps, female vocals, 110 BPM.',\n  duration: '30',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"eleven_music\", {\n    \"prompt\": \"An upbeat indie pop song about a summer road trip, bright guitars, handclaps, female vocals, 110 BPM.\",\n    \"duration\": \"30\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
+      }
+    },
+    "/v1/eleven_speech/generate": {
+      "post": {
+        "operationId": "generate_eleven_speech",
+        "summary": "Eleven Speech",
+        "description": "Generate audio with Eleven Speech.",
+        "tags": [
+          "Audio models"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "A key of your choosing, 1 to 255 characters, scoped to your API key. A retried submit with the same key returns the original request with `200` instead of charging again. The key identifies the first submission made with it; later bodies are not compared. A refusal recorded under the key (its envelope carries `request_id`) replays the same way, so a new attempt needs a new key.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "A partial config for Eleven Speech.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The text prompt."
+                  },
+                  "seed": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Integer seed for reproducible output; omit or send null for a random seed."
+                  },
+                  "model_id": {
+                    "type": "string",
+                    "enum": [
+                      "eleven-v4"
+                    ],
+                    "description": "The model variant to generate with.",
+                    "default": "eleven-v4"
+                  },
+                  "voice": {
+                    "type": "string",
+                    "enum": [
+                      "darian",
+                      "talia",
+                      "elara",
+                      "baxter",
+                      "eldrin",
+                      "elowen",
+                      "kaelen",
+                      "lawrence",
+                      "alicia",
+                      "maisie",
+                      "warren",
+                      "jade",
+                      "caleb",
+                      "sawyer",
+                      "florence",
+                      "wyatt"
+                    ],
+                    "description": "The voice that speaks the prompt.",
+                    "default": "darian"
+                  },
+                  "stability": {
+                    "type": "number",
+                    "default": 0.5
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "additionalProperties": true
+              },
+              "example": {
+                "prompt": "Every lighthouse keeps one promise... to stay lit until morning. [softly] And this one never broke it."
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request was accepted; poll `status_url` for the result. A retried submit whose `Idempotency-Key` was used before answers `200` with the same shape, the original request, and charges nothing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                },
+                "example": {
+                  "request_id": "d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff",
+                  "status": "in_progress",
+                  "architecture": "eleven_speech",
+                  "model_id": "eleven-v4",
+                  "created_at": "2026-09-17T14:52:48.000Z",
+                  "updated_at": "2026-09-17T14:52:49.000Z",
+                  "billing": {
+                    "mode": "gems",
+                    "gems_charged": 30
+                  },
+                  "result": null,
+                  "error": null,
+                  "status_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/status",
+                  "cancel_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/cancel"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGenerateRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/InsufficientGems"
+          },
+          "403": {
+            "$ref": "#/components/responses/GenerationForbidden"
+          },
+          "410": {
+            "$ref": "#/components/responses/ArchitectureRetired"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "451": {
+            "$ref": "#/components/responses/ExternalContentBlock"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('eleven_speech', {\n  prompt: 'Every lighthouse keeps one promise... to stay lit until morning. [softly] And this one never broke it.',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"eleven_speech\", {\n    \"prompt\": \"Every lighthouse keeps one promise... to stay lit until morning. [softly] And this one never broke it.\",\n})\n\nprint(request[\"result\"][\"url\"])"
           }
         ]
       }

@@ -539,6 +539,26 @@ export interface MangoConfig {
   [key: string]: unknown;
 }
 
+/** The config for MOSS-Image (`POST /v1/moss_image/generate`). Generate an image with MOSS-Image. */
+export interface MossImageConfig {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"moss-image"`. */
+  model_id?: 'moss-image';
+  /** Aspect ratio as `W:H`. Default: `"4:5"`. */
+  aspect_ratio?:
+    '21:9' | '16:9' | '3:2' | '5:4' | '1:1' | '4:5' | '2:3' | '9:16' | '9:21';
+  /** Output resolution token. Default: `"1k"`. */
+  resolution?: '1k' | '2k';
+  /** Default: `50`. */
+  num_inference_steps?: number;
+  /** Default: `3`. */
+  guidance_scale?: number;
+  [key: string]: unknown;
+}
+
 /** The config for Nano Banana 2 (`POST /v1/nano_banana_v2/generate`). Generate an image with Nano Banana 2. */
 export interface NanoBananaV2Config {
   /** The text prompt. */
@@ -1029,8 +1049,8 @@ export interface PlumConfig {
   prompt: string;
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
-  /** The model variant to generate with. Default: `"plum-max"`. */
-  model_id?: 'plum' | 'plum-max';
+  /** The model variant to generate with. Default: `"plum-fast"`. */
+  model_id?: 'plum' | 'plum-max' | 'plum-fast';
   /** Aspect ratio as `W:H`. Default: `"16:9"`. */
   aspect_ratio?: '16:9' | '9:16' | '1:1' | '4:3' | '3:4' | '21:9';
   /** Output resolution token. Default: `"480P"`. */
@@ -1120,6 +1140,52 @@ export interface Wan22Config {
   [key: string]: unknown;
 }
 
+/** The config for Eleven Music (`POST /v1/eleven_music/generate`). Generate audio with Eleven Music. */
+export interface ElevenMusicConfig {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"eleven-music-v2.5"`. */
+  model_id?: 'eleven-music-v2.5';
+  /** Clip length in seconds, as a token. Default: `"30"`. */
+  duration?: '10' | '30' | '60' | '120' | '180' | '300';
+  /** Default: `false`. */
+  instrumental?: boolean;
+  [key: string]: unknown;
+}
+
+/** The config for Eleven Speech (`POST /v1/eleven_speech/generate`). Generate audio with Eleven Speech. */
+export interface ElevenSpeechConfig {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"eleven-v4"`. */
+  model_id?: 'eleven-v4';
+  /** The voice that speaks the prompt. Default: `"darian"`. */
+  voice?:
+    | 'darian'
+    | 'talia'
+    | 'elara'
+    | 'baxter'
+    | 'eldrin'
+    | 'elowen'
+    | 'kaelen'
+    | 'lawrence'
+    | 'alicia'
+    | 'maisie'
+    | 'warren'
+    | 'jade'
+    | 'caleb'
+    | 'sawyer'
+    | 'florence'
+    | 'wyatt';
+  /** Default: `0.5`. */
+  stability?: number;
+  [key: string]: unknown;
+}
+
 /** The config for Seed Audio (`POST /v1/seed_audio/generate`). Generate audio with Seed Audio. */
 export interface SeedAudioConfig {
   /** The text prompt. */
@@ -1154,6 +1220,7 @@ export interface ArchitectureConfigs {
   hidream: HidreamConfig;
   krea_2: Krea2Config;
   mango: MangoConfig;
+  moss_image: MossImageConfig;
   nano_banana_v2: NanoBananaV2Config;
   sdxl_plus: SdxlPlusConfig;
   stable_diffusion_v15: StableDiffusionV15Config;
@@ -1172,6 +1239,8 @@ export interface ArchitectureConfigs {
   plum: PlumConfig;
   raspberry: RaspberryConfig;
   wan_22: Wan22Config;
+  eleven_music: ElevenMusicConfig;
+  eleven_speech: ElevenSpeechConfig;
   seed_audio: SeedAudioConfig;
 }
 
@@ -1189,6 +1258,7 @@ export const ARCHITECTURES = {
   hidream: { name: 'HiDream', type: 'image' },
   krea_2: { name: 'Krea 2', type: 'image' },
   mango: { name: 'Mango', type: 'image' },
+  moss_image: { name: 'MOSS-Image', type: 'image' },
   nano_banana_v2: { name: 'Nano Banana 2', type: 'image' },
   sdxl_plus: { name: 'SDXL Plus', type: 'image' },
   stable_diffusion_v15: { name: 'Stable Diffusion v1.5', type: 'image' },
@@ -1210,5 +1280,7 @@ export const ARCHITECTURES = {
   plum: { name: 'Plum', type: 'video' },
   raspberry: { name: 'Raspberry', type: 'video' },
   wan_22: { name: 'Wan Video v2.2', type: 'video' },
+  eleven_music: { name: 'Eleven Music', type: 'audio' },
+  eleven_speech: { name: 'Eleven Speech', type: 'audio' },
   seed_audio: { name: 'Seed Audio', type: 'audio' },
 } as const;
