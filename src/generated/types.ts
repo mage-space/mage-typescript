@@ -12,6 +12,7 @@ export type ErrorCode =
   | 'reference_not_found'
   | 'not_found'
   | 'insufficient_gems'
+  | 'payment_required'
   | 'forbidden'
   | 'content_blocked'
   | 'request_finished'
@@ -81,6 +82,10 @@ export interface GenerationRequestError {
   code: ErrorCode | (string & {});
   /** What went wrong, for a person. */
   message: string;
+  /** Present on `content_blocked` when the model's external provider refused the content, not Mage: `likeness` (a real person or celebrity), `ip` (copyrighted or trademarked material), `nsfw` (content past the model's own limit: sexual, violent, or otherwise sensitive), `minors` (may involve a minor), `audio` (the audio, usually copyrighted music or a real voice), or `unspecified` (the provider gave no reason). An open set: treat an unknown value as `unspecified`. */
+  reason?: 'likeness' | 'ip' | 'nsfw' | 'minors' | 'audio' | 'unspecified';
+  /** With `reason`: `input` when the provider refused the prompt or input media, `output` when it refused the generated media, or null when it did not say. */
+  stage?: 'input' | 'output' | null;
 }
 
 export interface ErrorBody {
