@@ -120,7 +120,7 @@ const page = await mage.characters.list({ limit: 50 });
 | Error                 | When                                                                                                                                                                                       |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `MageAPIError`        | The API answered with an error. It has `status`, `code` (such as `insufficient_gems` or `invalid_config`), `message`, and `requestId`. Handle a code you do not recognise by its `status`. |
-| `MageGenerationError` | `run` finished with a failed or cancelled request. It has `code` and `request`.                                                                                                            |
+| `MageGenerationError` | `run` finished with a failed or cancelled request. It has `code`, `reason`, `stage`, and `request`.                                                                                        |
 | `MageTimeoutError`    | `wait` or `run` reached your `timeout`, which also cuts short a status read in progress. The request keeps running; `request` is the last state read.                                      |
 | `MageConnectionError` | No response arrived after retrying.                                                                                                                                                        |
 | `MageError`           | The base class of all of the above, also thrown for a missing API key.                                                                                                                     |
@@ -133,6 +133,34 @@ try {
 } catch (error) {
   if (error instanceof MageAPIError && error.code === 'insufficient_gems') {
     // Top up and try again.
+  }
+  throw error;
+}
+```
+
+### Provider blocks
+
+Some models run on an external provider that can refuse a request: a real person, copyrighted material, mature content, and so on. The request fails with the code `content_blocked`, its Gems are refunded, and `MageGenerationError` says why in `reason`:
+
+| `reason`      | The provider refused                                          | What to change                                                               |
+| ------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `likeness`    | A real person or celebrity                                    | Remove real people from the prompt and images                                |
+| `ip`          | Copyrighted or trademarked material                           | Describe an original design instead of a character, brand, artist, or lyrics |
+| `nsfw`        | Content past the model's own limit                            | Try another model, or soften the request                                     |
+| `minors`      | Content that may involve a minor                              | Make sure everyone depicted is clearly an adult                              |
+| `audio`       | The audio, usually copyrighted music or a real person's voice | Remove music or voices from the inputs, or generate without audio            |
+| `unspecified` | Something it did not name                                     | Reword the prompt or change the images                                       |
+
+`stage` is `input` when the provider refused the prompt or input media, `output` when it refused the generated media, and null when it did not say. Retrying the same request usually gets the same block, so change the request or the model instead. New reasons may appear; treat one you do not know as `unspecified`. A `content_blocked` request without a `reason` was blocked by Mage's own content policy, which keeps the Gems.
+
+```ts
+import { MageGenerationError } from '@mage-space/sdk';
+
+try {
+  await mage.run('mango', { prompt: 'A portrait of a famous actor' });
+} catch (error) {
+  if (error instanceof MageGenerationError && error.reason === 'likeness') {
+    // Describe an original person instead, or pick another model.
   }
   throw error;
 }

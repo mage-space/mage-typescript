@@ -433,6 +433,39 @@ describe('wait and run', () => {
     expect(error).toBeInstanceOf(MageGenerationError);
     expect((error as MageGenerationError).code).toBe('content_blocked');
     expect((error as MageGenerationError).request).toEqual(failed);
+    expect((error as MageGenerationError).reason).toBeNull();
+    expect((error as MageGenerationError).stage).toBeNull();
+  });
+
+  it('run throws with the reason when the provider blocked the request', async () => {
+    const message =
+      "The model's provider refused a real person or celebrity in the prompt or images. Any gems charged were refunded.";
+    const { fetch } = fakeFetch(
+      json(202, request()),
+      json(
+        200,
+        request({
+          status: 'failed',
+          error: {
+            code: 'content_blocked',
+            message,
+            reason: 'likeness',
+            stage: 'input',
+          },
+        }),
+      ),
+    );
+
+    const error = await settle(
+      client(fetch).run('mango', { prompt: 'a' }),
+    ).catch((caught: unknown) => caught);
+
+    expect(error).toMatchObject({
+      code: 'content_blocked',
+      reason: 'likeness',
+      stage: 'input',
+      message: `Request req_1 failed (content_blocked: likeness): ${message}`,
+    });
   });
 
   it('run throws for a cancelled request', async () => {

@@ -30,6 +30,12 @@ const MEDIA_TYPE_BY_TAG = {
 // code by its HTTP status, so every field holding one accepts any string.
 const ERROR_CODES = components.Error.properties.error.properties.code.enum;
 
+// So does the list of reasons a model's provider refuses a request; clients
+// treat an unknown reason as `unspecified`.
+const PROVIDER_BLOCK_REASONS = components.Request.properties.error.anyOf.find(
+  (member) => member.type === 'object',
+).properties.reason.enum;
+
 const pascalCase = (value) =>
   value
     .split(/[^A-Za-z0-9]+/)
@@ -73,6 +79,9 @@ function typeOf(schema, nameHint) {
   if (schema.const !== undefined) return literal(schema.const);
   if (schema.enum && isDeepStrictEqual(schema.enum, ERROR_CODES)) {
     return 'ErrorCode | (string & {})';
+  }
+  if (schema.enum && isDeepStrictEqual(schema.enum, PROVIDER_BLOCK_REASONS)) {
+    return 'ProviderBlockReason | (string & {})';
   }
   if (schema.enum) return schema.enum.map(literal).join(' | ');
   if (schema.anyOf) {
@@ -179,6 +188,12 @@ const output = `// Generated from spec/openapi.json by scripts/generate.mjs. Do 
 
 /** The error codes this version of the SDK knows. */
 export type ErrorCode = ${ERROR_CODES.map(literal).join(' | ')};
+
+/**
+ * The reasons this version of the SDK knows for a model's provider refusing a
+ * request. Treat an unknown reason as \`unspecified\`.
+ */
+export type ProviderBlockReason = ${PROVIDER_BLOCK_REASONS.map(literal).join(' | ')};
 
 ${declarations.join('\n')}
 /** Each architecture's config, keyed by the id in its endpoint path. */

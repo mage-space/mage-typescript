@@ -19,7 +19,7 @@ The tests never call the real API. `npm run smoke` does, with `MAGE_API_KEY` set
 `src/generated/types.ts` is generated from `spec/openapi.json`, the API reference Mage publishes at <https://docs.mage.space/api/openapi.json>. Do not edit either file by hand:
 
 - To change how types are generated, edit `scripts/generate.mjs` and run `npm run generate`.
-- The spec is updated by the **Sync API spec** workflow, which checks the published reference every hour and opens a pull request when it changes. Additive changes (new models, fields, or options) merge on their own once CI passes. Breaking changes are labelled `needs-review` and wait for a maintainer.
+- The spec is updated by the **Sync API spec** workflow, which checks the published reference every hour and opens a pull request when it changes. Additive changes (new models, fields, options, error codes, or provider block reasons) merge on their own once CI passes. Breaking changes are labelled `needs-review` and wait for a maintainer.
 
 CI fails if the generated file does not match the spec.
 

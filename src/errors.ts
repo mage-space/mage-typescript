@@ -1,4 +1,7 @@
-import type { GenerationRequest } from './generated/types.js';
+import type {
+  GenerationRequest,
+  ProviderBlockReason,
+} from './generated/types.js';
 
 /** The base class of every error the SDK throws. */
 export class MageError extends Error {
@@ -88,16 +91,32 @@ export class MageGenerationError extends MageError {
   readonly request: GenerationRequest;
   /** The request's error code, or `cancelled`. */
   readonly code: string;
+  /**
+   * Why the model's external provider refused the content, such as
+   * `likeness` or `ip`, or null when the provider did not block it. A block
+   * has the code `content_blocked` and its Gems are refunded; retrying the
+   * same request usually gets the same block.
+   */
+  readonly reason: ProviderBlockReason | (string & {}) | null;
+  /**
+   * With `reason`: `input` when the provider refused the prompt or input
+   * media, `output` when it refused the generated media, else null.
+   */
+  readonly stage: 'input' | 'output' | null;
 
   constructor(request: GenerationRequest) {
     const code = request.error?.code ?? 'cancelled';
+    const reason = request.error?.reason ?? null;
+    const label = reason ? `${code}: ${reason}` : code;
     super(
       request.error
-        ? `Request ${request.request_id} failed (${code}): ${request.error.message}`
+        ? `Request ${request.request_id} failed (${label}): ${request.error.message}`
         : `Request ${request.request_id} was cancelled.`,
     );
     this.request = request;
     this.code = code;
+    this.reason = reason;
+    this.stage = request.error?.stage ?? null;
   }
 }
 
