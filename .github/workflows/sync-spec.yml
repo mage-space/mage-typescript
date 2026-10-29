@@ -53,7 +53,16 @@ jobs:
           body="$RUNNER_TEMP/body.md"
           "$oasdiff" changelog spec/openapi.json "$new" --format markdown > "$RUNNER_TEMP/changelog.md"
           # Warnings count too: oasdiff reports a removed optional field as one.
-          if ! "$oasdiff" breaking spec/openapi.json "$new" --fail-on WARN --format text > "$RUNNER_TEMP/breaking.txt"; then
+          # A value added to an error code or a provider block reason does not:
+          # the types hold both as open sets, which accept any string. A failure
+          # to compare counts as breaking, so a person looks at it.
+          if ! "$oasdiff" breaking spec/openapi.json "$new" --format json > "$RUNNER_TEMP/breaking.json" \
+            || ! jq --raw-output '.[]
+              | select(.level >= 2)
+              | select(.id == "response-property-enum-value-added"
+                  and (.text | test("`error/(anyOf\\[subschema #[0-9]+\\]/)?(code|reason)` response property")) | not)
+              | "\(.operation) \(.path): \(.text)"' "$RUNNER_TEMP/breaking.json" > "$RUNNER_TEMP/breaking.txt" \
+            || [ -s "$RUNNER_TEMP/breaking.txt" ]; then
             kind=breaking
             title='feat!: sync API spec'
           elif grep --quiet '^## API Changes' "$RUNNER_TEMP/changelog.md"; then

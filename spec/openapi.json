@@ -241,6 +241,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
@@ -366,6 +369,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "404": {
             "$ref": "#/components/responses/RequestNotFound"
           },
@@ -437,6 +443,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "404": {
             "$ref": "#/components/responses/RequestNotFound"
           },
@@ -500,6 +509,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
           },
           "500": {
             "$ref": "#/components/responses/InternalError"
@@ -583,6 +595,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
@@ -664,6 +679,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
@@ -732,6 +750,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "403": {
             "$ref": "#/components/responses/CreateForbidden"
           },
@@ -782,6 +803,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
           },
           "404": {
             "$ref": "#/components/responses/CharacterNotFound"
@@ -867,6 +891,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "500": {
             "$ref": "#/components/responses/InternalError"
           }
@@ -934,6 +961,9 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
           "403": {
             "$ref": "#/components/responses/CreateForbidden"
           },
@@ -984,6 +1014,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
           },
           "404": {
             "$ref": "#/components/responses/ReferenceNotFound"
@@ -7102,6 +7135,22 @@
           }
         }
       },
+      "PaymentRequired": {
+        "description": "The account has no successful payment yet: the API and the MCP server need one first (any Gem pack or plan). Signup bonus Gems work in the Mage app only.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": {
+                "code": "payment_required",
+                "message": "The Mage API and MCP server need a successful payment on this account first: buy any Gem pack or start a plan at https://www.mage.space/gems, then retry. Signup bonus Gems work in the Mage app only."
+              }
+            }
+          }
+        }
+      },
       "InternalError": {
         "description": "Something failed on Mage's side. Retry, and contact support if it persists.",
         "content": {
@@ -7248,7 +7297,7 @@
         }
       },
       "InsufficientGems": {
-        "description": "The gems balance is below the price. `gems_required` is the price.",
+        "description": "The gems balance is below the price (`insufficient_gems`; `gems_required` is the price), or the account has never paid (`payment_required`).",
         "content": {
           "application/json": {
             "schema": {
@@ -7501,6 +7550,7 @@
                       "reference_not_found",
                       "not_found",
                       "insufficient_gems",
+                      "payment_required",
                       "forbidden",
                       "content_blocked",
                       "request_finished",
@@ -7514,6 +7564,33 @@
                   "message": {
                     "type": "string",
                     "description": "What went wrong, for a person."
+                  },
+                  "reason": {
+                    "description": "Present on `content_blocked` when the model's external provider refused the content, not Mage: `likeness` (a real person or celebrity), `ip` (copyrighted or trademarked material), `nsfw` (content past the model's own limit: sexual, violent, or otherwise sensitive), `minors` (may involve a minor), `audio` (the audio, usually copyrighted music or a real voice), or `unspecified` (the provider gave no reason). An open set: treat an unknown value as `unspecified`.",
+                    "type": "string",
+                    "enum": [
+                      "likeness",
+                      "ip",
+                      "nsfw",
+                      "minors",
+                      "audio",
+                      "unspecified"
+                    ]
+                  },
+                  "stage": {
+                    "description": "With `reason`: `input` when the provider refused the prompt or input media, `output` when it refused the generated media, or null when it did not say.",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "input",
+                          "output"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -7573,6 +7650,7 @@
                   "reference_not_found",
                   "not_found",
                   "insufficient_gems",
+                  "payment_required",
                   "forbidden",
                   "content_blocked",
                   "request_finished",
