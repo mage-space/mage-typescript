@@ -81,6 +81,7 @@
                 "krea_2",
                 "moss_image",
                 "minimax_h3",
+                "magejutsu",
                 "z_image",
                 "stable_diffusion_xl",
                 "kiwi",
@@ -5487,6 +5488,209 @@
         ]
       }
     },
+    "/v1/magejutsu/generate": {
+      "post": {
+        "operationId": "generate_magejutsu",
+        "summary": "Magejutsu",
+        "description": "Generate a video with Magejutsu.",
+        "tags": [
+          "Video models"
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "A key of your choosing, 1 to 255 characters, scoped to your API key. A retried submit with the same key returns the original request with `200` instead of charging again. The key identifies the first submission made with it; later bodies are not compared. A refusal recorded under the key (its envelope carries `request_id`) replays the same way, so a new attempt needs a new key.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "A partial config for Magejutsu.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "description": "Optional directions; leave out to let the model decide.",
+                    "default": ""
+                  },
+                  "seed": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Integer seed for reproducible output; omit or send null for a random seed."
+                  },
+                  "model_id": {
+                    "type": "string",
+                    "enum": [
+                      "magejutsu",
+                      "magejutsu-lite",
+                      "magejutsu-feather"
+                    ],
+                    "description": "The model variant to generate with.",
+                    "default": "magejutsu"
+                  },
+                  "resolution": {
+                    "type": "string",
+                    "enum": [
+                      "480p",
+                      "720p",
+                      "1080p"
+                    ],
+                    "description": "Output resolution token.",
+                    "default": "720p"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "motion_transfer",
+                      "object_swap"
+                    ],
+                    "description": "One of the listed tokens.",
+                    "default": "motion_transfer"
+                  },
+                  "image": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^data:[^;,]+(?:;[^;,]+)*;base64,"
+                      }
+                    ],
+                    "description": "The reference image. An https URL or a data URL."
+                  },
+                  "additional_images": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^data:[^;,]+(?:;[^;,]+)*;base64,"
+                        }
+                      ]
+                    },
+                    "description": "Additional reference images. Each an https URL or a data URL."
+                  },
+                  "videos": {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        {
+                          "type": "string",
+                          "pattern": "^data:[^;,]+(?:;[^;,]+)*;base64,"
+                        }
+                      ]
+                    },
+                    "description": "The source videos. Each an https URL or a data URL."
+                  },
+                  "keep_original_audio": {
+                    "type": "boolean",
+                    "default": true
+                  }
+                },
+                "additionalProperties": true,
+                "required": []
+              },
+              "example": {
+                "prompt": "A slow push-in on a lighthouse at dusk, waves breaking below",
+                "videos": [
+                  "https://example.com/input.jpg"
+                ],
+                "image": "https://example.com/input.jpg"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "The request was accepted; poll `status_url` for the result. A retried submit whose `Idempotency-Key` was used before answers `200` with the same shape, the original request, and charges nothing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                },
+                "example": {
+                  "request_id": "d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff",
+                  "status": "in_progress",
+                  "architecture": "magejutsu",
+                  "model_id": "magejutsu",
+                  "created_at": "2026-09-17T14:52:48.000Z",
+                  "updated_at": "2026-09-17T14:52:49.000Z",
+                  "billing": {
+                    "mode": "gems",
+                    "gems_charged": 1586
+                  },
+                  "result": null,
+                  "error": null,
+                  "status_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/status",
+                  "cancel_url": "https://api.mage.space/v1/requests/d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff/cancel"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidGenerateRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/InsufficientGems"
+          },
+          "403": {
+            "$ref": "#/components/responses/GenerationForbidden"
+          },
+          "410": {
+            "$ref": "#/components/responses/ArchitectureRetired"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "451": {
+            "$ref": "#/components/responses/ExternalContentBlock"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "typescript",
+            "label": "TypeScript SDK",
+            "source": "import Mage from '@mage-space/sdk';\n\nconst mage = new Mage(); // reads MAGE_API_KEY\n\nconst request = await mage.run('magejutsu', {\n  prompt: 'A slow push-in on a lighthouse at dusk, waves breaking below',\n  videos: [\n    'https://example.com/input.jpg',\n  ],\n  image: 'https://example.com/input.jpg',\n});\n\nconsole.log(request.result.url);"
+          },
+          {
+            "lang": "python",
+            "label": "Python SDK",
+            "source": "from mage_space import Mage\n\nmage = Mage()  # reads MAGE_API_KEY\n\nrequest = mage.run(\"magejutsu\", {\n    \"prompt\": \"A slow push-in on a lighthouse at dusk, waves breaking below\",\n    \"videos\": [\n        \"https://example.com/input.jpg\",\n    ],\n    \"image\": \"https://example.com/input.jpg\",\n})\n\nprint(request[\"result\"][\"url\"])"
+          }
+        ]
+      }
+    },
     "/v1/melon/generate": {
       "post": {
         "operationId": "generate_melon",
@@ -7557,6 +7761,7 @@
                       "handle_taken",
                       "too_many_requests",
                       "generation_failed",
+                      "preprocess_refused",
                       "internal_error"
                     ],
                     "description": "A stable error code."
@@ -7657,6 +7862,7 @@
                   "handle_taken",
                   "too_many_requests",
                   "generation_failed",
+                  "preprocess_refused",
                   "internal_error"
                 ],
                 "description": "A stable error code; treat an unknown code by its HTTP status."
