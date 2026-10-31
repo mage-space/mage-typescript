@@ -19,6 +19,7 @@ export type ErrorCode =
   | 'handle_taken'
   | 'too_many_requests'
   | 'generation_failed'
+  | 'preprocess_refused'
   | 'internal_error';
 
 /**
@@ -997,6 +998,29 @@ export interface LtxVideoConfig {
   [key: string]: unknown;
 }
 
+/** The config for Magejutsu (`POST /v1/magejutsu/generate`). Generate a video with Magejutsu. */
+export interface MagejutsuConfig {
+  /** Optional directions; leave out to let the model decide. Default: `""`. */
+  prompt?: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"magejutsu"`. */
+  model_id?: 'magejutsu' | 'magejutsu-lite' | 'magejutsu-feather';
+  /** Output resolution token. Default: `"720p"`. */
+  resolution?: '480p' | '720p' | '1080p';
+  /** One of the listed tokens. Default: `"motion_transfer"`. */
+  mode?: 'motion_transfer' | 'object_swap';
+  /** The reference image. An https URL or a data URL. */
+  image?: string;
+  /** Additional reference images. Each an https URL or a data URL. */
+  additional_images?: string[];
+  /** The source videos. Each an https URL or a data URL. */
+  videos?: string[];
+  /** Default: `true`. */
+  keep_original_audio?: boolean;
+  [key: string]: unknown;
+}
+
 /** The config for Melon (`POST /v1/melon/generate`). Generate a video with Melon. */
 export interface MelonConfig {
   /** The text prompt. */
@@ -1246,6 +1270,7 @@ export interface ArchitectureConfigs {
   kiwi: KiwiConfig;
   lemon: LemonConfig;
   ltx_video: LtxVideoConfig;
+  magejutsu: MagejutsuConfig;
   melon: MelonConfig;
   minimax_h3: MinimaxH3Config;
   plum: PlumConfig;
@@ -1287,6 +1312,7 @@ export const ARCHITECTURES = {
   kiwi: { name: 'Kiwi', type: 'video' },
   lemon: { name: 'Lemon', type: 'video' },
   ltx_video: { name: 'LTX Video', type: 'video' },
+  magejutsu: { name: 'Magejutsu', type: 'video' },
   melon: { name: 'Melon', type: 'video' },
   minimax_h3: { name: 'MiniMax-H3', type: 'video' },
   plum: { name: 'Plum', type: 'video' },
