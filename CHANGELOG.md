@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/mage-space/mage-typescript/compare/v0.0.1...v0.0.2) (2026-10-31)
+
+
+### Features
+
+* sync API spec ([#11](https://github.com/mage-space/mage-typescript/issues/11)) ([8e1ba75](https://github.com/mage-space/mage-typescript/commit/8e1ba75b46d39600338132dcdccbc144ec0bd012))
+
 ## [0.0.1](https://github.com/mage-space/mage-typescript/compare/v0.0.0...v0.0.1) (2026-10-29)
 
 
