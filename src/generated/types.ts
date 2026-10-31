@@ -436,11 +436,8 @@ export interface GrokImageConfig {
   prompt: string;
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
-  /** The model variant to generate with. Default: `"grok-imagine-image-quality"`. */
-  model_id?:
-    | 'grok-imagine-image'
-    | 'grok-imagine-image-quality'
-    | 'grok-imagine-image-2.0';
+  /** The model variant to generate with. Default: `"grok-imagine-image-2.0"`. */
+  model_id?: 'grok-imagine-image' | 'grok-imagine-image-2.0';
   /** Aspect ratio as `W:H`. Default: `"1:1"`. */
   aspect_ratio?:
     | '1:1'

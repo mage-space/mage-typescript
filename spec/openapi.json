@@ -1808,11 +1808,10 @@
                     "type": "string",
                     "enum": [
                       "grok-imagine-image",
-                      "grok-imagine-image-quality",
                       "grok-imagine-image-2.0"
                     ],
                     "description": "The model variant to generate with.",
-                    "default": "grok-imagine-image-quality"
+                    "default": "grok-imagine-image-2.0"
                   },
                   "aspect_ratio": {
                     "type": "string",
@@ -1901,12 +1900,12 @@
                   "request_id": "d7e6c0f3-6699-4f6c-bb45-2ad7fd9158ff",
                   "status": "in_progress",
                   "architecture": "grok_image",
-                  "model_id": "grok-imagine-image-quality",
+                  "model_id": "grok-imagine-image-2.0",
                   "created_at": "2026-09-17T14:52:48.000Z",
                   "updated_at": "2026-09-17T14:52:49.000Z",
                   "billing": {
                     "mode": "gems",
-                    "gems_charged": 75
+                    "gems_charged": 90
                   },
                   "result": null,
                   "error": null,
