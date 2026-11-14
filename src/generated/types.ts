@@ -415,18 +415,29 @@ export interface GptImage2Config {
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
   /** The model variant to generate with. Default: `"gpt-image-2"`. */
-  model_id?: 'gpt-image-2' | 'gpt-image-2.5-flare' | 'gpt-image-2.5-sunburst';
+  model_id?:
+    | 'gpt-image-2'
+    | 'gpt-image-2.5-flare'
+    | 'gpt-image-2.5-sunburst'
+    | 'gpt-image-2.6-flare'
+    | 'gpt-image-2.6-sunburst';
   /** Aspect ratio as `W:H`. Default: `"4:5"`. */
   aspect_ratio?:
     '21:9' | '16:9' | '3:2' | '5:4' | '1:1' | '4:5' | '2:3' | '9:16' | '9:21';
   /** Output resolution token. Default: `"1K"`. */
   resolution?: '1K' | '2K';
+  /** The file to make: `jpeg` for a still, or `gif` for an animation on a GPT Image 2.6 model. Default: `"jpeg"`. */
+  output_format?: 'jpeg' | 'gif';
   /** The reference image. An https URL or a data URL. */
   image?: string;
   /** Additional reference images. Each an https URL or a data URL. */
   additional_images?: string[];
   /** Default: `"low"`. */
   quality?: string;
+  /** Default: `9`. */
+  frame_count?: number;
+  /** Default: `200`. */
+  frame_duration_ms?: number;
   [key: string]: unknown;
 }
 
@@ -436,11 +447,8 @@ export interface GrokImageConfig {
   prompt: string;
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
-  /** The model variant to generate with. Default: `"grok-imagine-image-quality"`. */
-  model_id?:
-    | 'grok-imagine-image'
-    | 'grok-imagine-image-quality'
-    | 'grok-imagine-image-2.0';
+  /** The model variant to generate with. Default: `"grok-imagine-image-2.0"`. */
+  model_id?: 'grok-imagine-image' | 'grok-imagine-image-2.0';
   /** Aspect ratio as `W:H`. Default: `"1:1"`. */
   aspect_ratio?:
     | '1:1'
@@ -538,13 +546,39 @@ export interface MangoConfig {
   prompt: string;
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
-  /** The model variant to generate with. Default: `"mango-v3"`. */
-  model_id?: 'mango' | 'mango-v2' | 'mango-v3s' | 'mango-v3' | 'mango-v3-turbo';
+  /** The model variant to generate with. Default: `"mango-v4"`. */
+  model_id?:
+    | 'mango'
+    | 'mango-v2'
+    | 'mango-v3s'
+    | 'mango-v3'
+    | 'mango-v3-turbo'
+    | 'mango-v4';
   /** Aspect ratio as `W:H`. Default: `"4:5"`. */
   aspect_ratio?:
     '21:9' | '16:9' | '3:2' | '5:4' | '1:1' | '4:5' | '2:3' | '9:16' | '9:21';
   /** Output resolution token. Default: `"2K"`. */
   resolution?: '1K' | '2K' | '3K' | '4K';
+  /** The reference image. An https URL or a data URL. */
+  image?: string;
+  /** Additional reference images. Each an https URL or a data URL. */
+  additional_images?: string[];
+  [key: string]: unknown;
+}
+
+/** The config for MiniMax H3 Image (`POST /v1/minimax_h3_image/generate`). Generate an image with MiniMax H3 Image. */
+export interface MinimaxH3ImageConfig {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"minimax-h3-image"`. */
+  model_id?: 'minimax-h3-image';
+  /** Aspect ratio as `W:H`. Default: `"4:5"`. */
+  aspect_ratio?:
+    '21:9' | '16:9' | '3:2' | '5:4' | '1:1' | '4:5' | '2:3' | '9:16' | '9:21';
+  /** Output resolution token. Default: `"2k"`. */
+  resolution?: '2k' | '4k';
   /** The reference image. An https URL or a data URL. */
   image?: string;
   /** Additional reference images. Each an https URL or a data URL. */
@@ -652,6 +686,32 @@ export interface SdxlPlusConfig {
   adetailer_hands_blur?: number;
   /** Default: `4`. */
   adetailer_hands_dilation?: number;
+  [key: string]: unknown;
+}
+
+/** The config for Seedream (`POST /v1/seedream/generate`). Generate an image with Seedream. */
+export interface SeedreamConfig {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"seedream-5.5"`. */
+  model_id?:
+    | 'seedream-4.0'
+    | 'seedream-4.5'
+    | 'seedream-5.0-lite'
+    | 'seedream-5.0-pro'
+    | 'seedream-5.0-flash'
+    | 'seedream-5.5';
+  /** Aspect ratio as `W:H`. Default: `"4:5"`. */
+  aspect_ratio?:
+    '21:9' | '16:9' | '3:2' | '5:4' | '1:1' | '4:5' | '2:3' | '9:16' | '9:21';
+  /** Output resolution token. Default: `"2K"`. */
+  resolution?: '1K' | '2K' | '3K' | '4K';
+  /** The reference image. An https URL or a data URL. */
+  image?: string;
+  /** Additional reference images. Each an https URL or a data URL. */
+  additional_images?: string[];
   [key: string]: unknown;
 }
 
@@ -819,8 +879,6 @@ export interface BlueberryConfig {
   shot_type?: string;
   /** Default: `false`. */
   prompt_extend?: boolean;
-  /** Default: `true`. */
-  audio?: boolean;
   [key: string]: unknown;
 }
 
@@ -1054,8 +1112,8 @@ export interface MinimaxH3Config {
   prompt: string;
   /** Integer seed for reproducible output; omit or send null for a random seed. */
   seed?: number | null;
-  /** The model variant to generate with. Default: `"minimax-h3-turbo"`. */
-  model_id?: 'minimax-h3-turbo' | 'minimax-h3';
+  /** The model variant to generate with. Default: `"pika-h3-flex"`. */
+  model_id?: 'minimax-h3-turbo' | 'pika-h3-flex' | 'minimax-h3';
   /** Aspect ratio as `W:H`. Default: `"16:9"`. */
   aspect_ratio?:
     '21:9' | '16:9' | '3:2' | '5:4' | '1:1' | '4:5' | '2:3' | '9:16' | '9:21';
@@ -1148,6 +1206,94 @@ export interface RaspberryConfig {
   [key: string]: unknown;
 }
 
+/** The config for Seedance (`POST /v1/seedance/generate`). Generate a video with Seedance. */
+export interface SeedanceConfig {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"seedance-2.5"`. */
+  model_id?:
+    'seedance-2.0-mini' | 'seedance-2.0-fast' | 'seedance-2.0' | 'seedance-2.5';
+  /** Aspect ratio as `W:H`. Default: `"16:9"`. */
+  aspect_ratio?: '16:9' | '9:16' | '1:1';
+  /** Output resolution token. Default: `"480p"`. */
+  resolution?: '480p' | '720p' | '1080p' | '4k';
+  /** Clip length in seconds, as a token. Default: `"4"`. */
+  duration?: '4' | '5' | '8' | '10' | '15' | '20' | '25' | '30';
+  /** The reference image. An https URL or a data URL. */
+  image?: string;
+  /** Additional reference images. Each an https URL or a data URL. */
+  additional_images?: string[];
+  /** The source videos. Each an https URL or a data URL. */
+  videos?: string[];
+  /** Default: `true`. */
+  use_character_voices?: boolean;
+  [key: string]: unknown;
+}
+
+/** The config for Wan 3.0 (`POST /v1/wan_3/generate`). Generate a video with Wan 3.0. */
+export interface Wan3Config {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"wan-3.0"`. */
+  model_id?: 'wan-3.0';
+  /** Aspect ratio as `W:H`. Default: `"16:9"`. */
+  aspect_ratio?: '16:9' | '4:3' | '1:1' | '3:4' | '9:16';
+  /** Output resolution token. Default: `"480p"`. */
+  resolution?: '480p' | '720p' | '1080p';
+  /** Clip length in seconds, as a token. Default: `"3"`. */
+  duration?:
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '7'
+    | '8'
+    | '9'
+    | '10'
+    | '11'
+    | '12'
+    | '13'
+    | '14'
+    | '15'
+    | '16'
+    | '17'
+    | '18'
+    | '19'
+    | '20'
+    | '21'
+    | '22'
+    | '23'
+    | '24'
+    | '25'
+    | '26'
+    | '27'
+    | '28'
+    | '29'
+    | '30';
+  /** The first frame image. An https URL or a data URL. */
+  first_image?: string;
+  /** The last frame image. An https URL or a data URL. */
+  last_image?: string;
+  /** The reference image. An https URL or a data URL. */
+  image?: string;
+  /** Additional reference images. Each an https URL or a data URL. */
+  additional_images?: string[];
+  /** The source videos. Each an https URL or a data URL. */
+  videos?: string[];
+  /** Default: `true`. */
+  audio?: boolean;
+  /** Default: `false`. */
+  prompt_extend?: boolean;
+  /** Default: `true`. */
+  use_character_voices?: boolean;
+  [key: string]: unknown;
+}
+
 /** The config for Wan Video v2.2 (`POST /v1/wan_22/generate`). Generate a video with Wan Video v2.2. */
 export interface Wan22Config {
   /** The text prompt. */
@@ -1222,6 +1368,23 @@ export interface ElevenSpeechConfig {
   [key: string]: unknown;
 }
 
+/** The config for MiniMax Music 3 (`POST /v1/minimax_music/generate`). Generate audio with MiniMax Music 3. */
+export interface MinimaxMusicConfig {
+  /** The text prompt. */
+  prompt: string;
+  /** Integer seed for reproducible output; omit or send null for a random seed. */
+  seed?: number | null;
+  /** The model variant to generate with. Default: `"minimax-music-3"`. */
+  model_id?: 'minimax-music-3';
+  /** Clip length in seconds, as a token. Default: `"120"`. */
+  duration?: '30' | '60' | '120' | '180' | '240' | '300';
+  /** Default: `""`. */
+  lyrics?: string;
+  /** Default: `false`. */
+  instrumental?: boolean;
+  [key: string]: unknown;
+}
+
 /** The config for Seed Audio (`POST /v1/seed_audio/generate`). Generate audio with Seed Audio. */
 export interface SeedAudioConfig {
   /** The text prompt. */
@@ -1256,9 +1419,11 @@ export interface ArchitectureConfigs {
   hidream: HidreamConfig;
   krea_2: Krea2Config;
   mango: MangoConfig;
+  minimax_h3_image: MinimaxH3ImageConfig;
   moss_image: MossImageConfig;
   nano_banana_v2: NanoBananaV2Config;
   sdxl_plus: SdxlPlusConfig;
+  seedream: SeedreamConfig;
   stable_diffusion_v15: StableDiffusionV15Config;
   stable_diffusion_v35_large: StableDiffusionV35LargeConfig;
   stable_diffusion_xl: StableDiffusionXlConfig;
@@ -1275,9 +1440,12 @@ export interface ArchitectureConfigs {
   minimax_h3: MinimaxH3Config;
   plum: PlumConfig;
   raspberry: RaspberryConfig;
+  seedance: SeedanceConfig;
+  wan_3: Wan3Config;
   wan_22: Wan22Config;
   eleven_music: ElevenMusicConfig;
   eleven_speech: ElevenSpeechConfig;
+  minimax_music: MinimaxMusicConfig;
   seed_audio: SeedAudioConfig;
 }
 
@@ -1295,9 +1463,11 @@ export const ARCHITECTURES = {
   hidream: { name: 'HiDream', type: 'image' },
   krea_2: { name: 'Krea 2', type: 'image' },
   mango: { name: 'Mango', type: 'image' },
+  minimax_h3_image: { name: 'MiniMax H3 Image', type: 'image' },
   moss_image: { name: 'MOSS-Image', type: 'image' },
   nano_banana_v2: { name: 'Nano Banana 2', type: 'image' },
   sdxl_plus: { name: 'SDXL Plus', type: 'image' },
+  seedream: { name: 'Seedream', type: 'image' },
   stable_diffusion_v15: { name: 'Stable Diffusion v1.5', type: 'image' },
   stable_diffusion_v35_large: {
     name: 'Stable Diffusion v3.5 Large',
@@ -1317,8 +1487,11 @@ export const ARCHITECTURES = {
   minimax_h3: { name: 'MiniMax-H3', type: 'video' },
   plum: { name: 'Plum', type: 'video' },
   raspberry: { name: 'Raspberry', type: 'video' },
+  seedance: { name: 'Seedance', type: 'video' },
+  wan_3: { name: 'Wan 3.0', type: 'video' },
   wan_22: { name: 'Wan Video v2.2', type: 'video' },
   eleven_music: { name: 'Eleven Music', type: 'audio' },
   eleven_speech: { name: 'Eleven Speech', type: 'audio' },
+  minimax_music: { name: 'MiniMax Music 3', type: 'audio' },
   seed_audio: { name: 'Seed Audio', type: 'audio' },
 } as const;
